@@ -411,11 +411,12 @@ export default function Gallery() {
                 <div style={{
                   position: "relative",
                   width: "100%",
-                  height: isMobile ? 240 : 360,
+                  height: isMobile ? 280 : 420,
                   flexShrink: 0,
                   flex: isMobile ? "none" : "1 1 300px",
+                  background: "#0d0812",
                 }}>
-                  <Image src={current.src} alt={current.title} fill style={{ objectFit: "cover" }} />
+                  <Image src={current.src} alt={current.title} fill style={{ objectFit: "contain" }} />
                   <div style={{
                     position: "absolute", top: 12, left: 12,
                     background: "rgba(13,8,18,0.7)", backdropFilter: "blur(6px)",
