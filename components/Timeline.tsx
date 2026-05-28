@@ -12,7 +12,7 @@ const events = [
 export default function Timeline() {
   useScrollReveal();
   return (
-    <section id="story" style={{ padding: "120px 60px", maxWidth: 900, margin: "0 auto", position: "relative", zIndex: 1 }}>
+    <section id="story" style={{ padding: "clamp(60px, 10vw, 120px) clamp(20px, 5vw, 60px)", maxWidth: 900, margin: "0 auto", position: "relative", zIndex: 1 }}>
       <h2
         className="reveal"
         style={{
@@ -26,7 +26,7 @@ export default function Timeline() {
         Our Journey
       </h2>
 
-      <div style={{ position: "relative" }}>
+      <div className="timeline-wrapper" style={{ position: "relative" }}>
         {/* center line */}
         <div
           style={{
@@ -46,7 +46,7 @@ export default function Timeline() {
           return (
             <div
               key={i}
-              className={isLeft ? "reveal-left" : "reveal-right"}
+              className={`tl-item ${isLeft ? "reveal-left" : "reveal-right"}`}
               style={{
                 display: "flex",
                 justifyContent: isLeft ? "flex-end" : "flex-start",
@@ -56,14 +56,13 @@ export default function Timeline() {
                 position: "relative",
               }}
             >
-              {/* dot */}
               <div
+                className="tl-dot"
                 style={{
                   position: "absolute",
                   left: "50%",
                   top: 24,
-                  width: 14,
-                  height: 14,
+                  width: 14, height: 14,
                   borderRadius: "50%",
                   background: "#e8446a",
                   transform: "translateX(-50%)",
@@ -71,25 +70,16 @@ export default function Timeline() {
                   zIndex: 2,
                 }}
               />
-              <div
-                style={{
-                  maxWidth: 340,
-                  background: "rgba(255,255,255,0.04)",
-                  backdropFilter: "blur(12px)",
-                  borderRadius: 18,
-                  border: "1px solid rgba(232,68,106,0.2)",
-                  padding: "24px 28px",
-                }}
-              >
+              <div style={{
+                maxWidth: 340,
+                background: "rgba(255,255,255,0.04)",
+                backdropFilter: "blur(12px)",
+                borderRadius: 18,
+                border: "1px solid rgba(232,68,106,0.2)",
+                padding: "24px 28px",
+              }}>
                 <div style={{ fontSize: "1.8rem", marginBottom: 8 }}>{e.icon}</div>
-                <h3
-                  style={{
-                    fontFamily: "'Playfair Display', serif",
-                    fontSize: "1.15rem",
-                    color: "#f0d080",
-                    marginBottom: 8,
-                  }}
-                >
+                <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.15rem", color: "#f0d080", marginBottom: 8 }}>
                   {e.title}
                 </h3>
                 <p style={{ fontStyle: "italic", opacity: 0.8, lineHeight: 1.7, fontSize: "0.95rem" }}>{e.text}</p>

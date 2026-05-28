@@ -88,3 +88,23 @@ body {
   opacity: 1;
   transform: translateX(0);
 }
+
+@media (max-width: 768px) {
+  body { cursor: auto; }
+  .cursor-ring, .cursor-dot { display: none; }
+}
+
+@media (max-width: 640px) {
+
+  /* Timeline items mobile */
+  .tl-item {
+    padding-left: 44px !important;
+    padding-right: 8px !important;
+    justify-content: flex-start !important;
+  }
+
+  /* Timeline dots mobile */
+  .tl-dot {
+    left: 16px !important;
+  }
+}

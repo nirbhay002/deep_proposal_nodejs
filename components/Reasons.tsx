@@ -13,7 +13,7 @@ const reasons = [
 export default function Reasons() {
   useScrollReveal();
   return (
-    <section id="reasons" style={{ padding: "120px 60px", maxWidth: 1200, margin: "0 auto", position: "relative", zIndex: 1 }}>
+    <section id="reasons" style={{ padding: "clamp(60px, 10vw, 120px) clamp(20px, 5vw, 60px)", maxWidth: 1200, margin: "0 auto", position: "relative", zIndex: 1 }}>
       <h2
         className="reveal"
         style={{

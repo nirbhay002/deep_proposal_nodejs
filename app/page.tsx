@@ -46,7 +46,7 @@ export default function Home() {
 
       <nav style={navStyle}>
         <span style={logoStyle}>Deep & Devanshi</span>
-        <div style={{ display: "flex", gap: "32px" }}>
+        <div style={{ display: "flex", gap: "24px", flexWrap: "wrap", justifyContent: "flex-end",}}>
           {(
             [
               { label: "Home", href: "#home" },
@@ -56,7 +56,7 @@ export default function Home() {
               { label: "The Question", href: "#proposal" },
             ] as { label: string; href: string }[]
           ).map((item) => (
-            <a key={item.href} href={item.href} style={navLinkStyle}>
+            <a key={item.href} href={item.href} style={ {...navLinkStyle, fontSize: "0.75rem"}}>
               {item.label}
             </a>
           ))}
@@ -80,7 +80,7 @@ const navStyle: React.CSSProperties = {
   position: "fixed",
   top: 0,
   width: "100%",
-  padding: "18px 60px",
+  padding: "16px clamp(16px, 4vw, 60px)",
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",

@@ -90,7 +90,7 @@ export default function ProposalSection({ onYes }: { onYes: () => void }) {
         Aaj se nahi, kal se nahi — humesha ke liye. 💍
       </p>
 
-      <div style={{ position: "relative", width: "100%", maxWidth: 500, height: 120, margin: "0 auto" }}>
+      <div style={{ position: "relative", width: "min(100%, 500px)", height: 140, margin: "0 auto" }}>
         {/* YES button — centered */}
         <button
           onClick={onYes}
@@ -99,12 +99,12 @@ export default function ProposalSection({ onYes }: { onYes: () => void }) {
             left: "50%",
             top: "50%",
             transform: "translate(-50%, -50%)",
-            padding: "18px 56px",
+            padding: "clamp(14px, 3vw, 18px) clamp(32px, 6vw, 56px)",
             borderRadius: 50,
             border: "none",
             background: "linear-gradient(135deg, #e8446a, #c44569)",
             color: "white",
-            fontSize: "1.15rem",
+            fontSize: "clamp(0.95rem, 3vw, 1.15rem)",
             fontWeight: 700,
             letterSpacing: 1,
             cursor: "none",

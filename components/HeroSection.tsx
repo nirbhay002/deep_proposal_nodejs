@@ -31,8 +31,8 @@ export default function HeroSection() {
       <div
         style={{
           position: "relative",
-          width: 260,
-          height: 260,
+          width: "clamp(180px, 40vw, 260px)" as unknown as number,
+          height: "clamp(180px, 40vw, 260px)" as unknown as number,
           marginBottom: 40,
         }}
       >

@@ -14,23 +14,22 @@ export default function Gallery() {
   useScrollReveal();
   const [cardOpened, setCardOpened] = useState(false);
   const [photosVisible, setPhotosVisible] = useState(false);
-  const [flashActive, setFlashActive] = useState(false);
+  const [lightBurst, setLightBurst] = useState(false);
   const [open, setOpen] = useState<number | null>(null);
   const [isClosing, setIsClosing] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
 
   function handleCardClick() {
     if (cardOpened) return;
-    // Bright flash trigger
-    setFlashActive(true);
-    setTimeout(() => setFlashActive(false), 600);
-    // Open card after tiny delay so flash starts first
+    setLightBurst(true);
     setTimeout(() => {
       setCardOpened(true);
       setTimeout(() => setPhotosVisible(true), 900);
-    }, 150);
+    }, 350);
+    setTimeout(() => setLightBurst(false), 800);
   }
 
-  function closeCard() {
+  function closeModal() {
     setIsClosing(true);
     setTimeout(() => { setOpen(null); setIsClosing(false); }, 400);
   }
@@ -40,20 +39,65 @@ export default function Gallery() {
   return (
     <section
       id="gallery"
-      style={{ padding: "120px 60px", maxWidth: 1200, margin: "0 auto", position: "relative", zIndex: 1 }}
+      ref={sectionRef}
+      style={{ padding: "clamp(60px, 10vw, 120px) clamp(20px, 5vw, 60px)", maxWidth: 1200, margin: "0 auto", position: "relative", zIndex: 1 }}
     >
       <h2
         className="reveal"
         style={{
           fontFamily: "'Great Vibes', cursive",
           fontSize: "clamp(2.5rem, 5vw, 4rem)",
-          textAlign: "center", marginBottom: 70,
+          textAlign: "center",
+          marginBottom: 70,
           color: "#e8446a",
           textShadow: "0 0 40px rgba(232,68,106,0.3)",
         }}
       >
         Our Beautiful Moments
       </h2>
+
+      {/* ── LIGHT BURST EFFECT ── */}
+      {lightBurst && (
+        <div style={{
+          position: "fixed",
+          inset: 0,
+          zIndex: 9990,
+          pointerEvents: "none",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          animation: "burstFade 0.8s ease-out forwards",
+        }}>
+          <div style={{
+            position: "absolute",
+            inset: 0,
+            background: "radial-gradient(circle at center, rgba(255,240,200,0.95) 0%, rgba(232,68,106,0.55) 30%, rgba(140,26,53,0.25) 60%, transparent 80%)",
+            animation: "burstExpand 0.8s ease-out forwards",
+          }} />
+          {[...Array(16)].map((_, i) => (
+            <div key={i} style={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              width: 2,
+              height: `${150 + (i % 3) * 80}px`,
+              background: "linear-gradient(to bottom, rgba(255,235,160,1), rgba(232,68,106,0.4), transparent)",
+              transformOrigin: "0% 0%",
+              transform: `rotate(${i * 22.5}deg) translateX(-50%)`,
+              animation: `rayExpand 0.65s ease-out ${i * 0.015}s forwards`,
+              borderRadius: 4,
+            }} />
+          ))}
+          {/* center flash */}
+          <div style={{
+            position: "absolute",
+            width: 120, height: 120,
+            borderRadius: "50%",
+            background: "radial-gradient(circle, rgba(255,255,220,1) 0%, rgba(255,200,100,0.8) 50%, transparent 100%)",
+            animation: "centerFlash 0.5s ease-out forwards",
+          }} />
+        </div>
+      )}
 
       {/* ── THE BIG GREETING CARD WRAPPER ── */}
       <div style={{
@@ -62,20 +106,8 @@ export default function Gallery() {
         overflow: "hidden",
         boxShadow: "0 40px 120px rgba(0,0,0,0.6), 0 0 80px rgba(232,68,106,0.1)",
         border: "1px solid rgba(232,68,106,0.2)",
-        perspective: "1200px",
+        perspective: "1400px",
       }}>
-
-        {/* Bright flash overlay on open */}
-        {flashActive && (
-          <div style={{
-            position: "absolute",
-            inset: 0,
-            zIndex: 50,
-            background: "radial-gradient(circle at 50% 50%, rgba(255,255,255,0.95) 0%, rgba(255,240,200,0.6) 30%, rgba(255,200,150,0.2) 60%, transparent 80%)",
-            animation: "flashBurst 0.6s ease-out forwards",
-            pointerEvents: "none",
-          }} />
-        )}
 
         {/* Gold shimmer strip top */}
         <div style={{
@@ -85,7 +117,7 @@ export default function Gallery() {
           animation: "shimmer 3s linear infinite",
         }} />
 
-        {/* ── CARD COVER (flips up on CLICK) ── */}
+        {/* ── CARD COVER ── */}
         <div
           onClick={handleCardClick}
           style={{
@@ -93,69 +125,74 @@ export default function Gallery() {
             top: 0, left: 0, right: 0,
             height: "100%",
             transformOrigin: "top center",
-            transform: cardOpened ? "rotateX(-100deg)" : "rotateX(0deg)",
-            transition: "transform 0.85s cubic-bezier(0.4, 0, 0.2, 1)",
+            transform: cardOpened ? "rotateX(-105deg)" : "rotateX(0deg)",
+            transition: "transform 0.9s cubic-bezier(0.4, 0, 0.2, 1)",
             transformStyle: "preserve-3d",
             zIndex: 10,
             pointerEvents: cardOpened ? "none" : "all",
+            cursor: cardOpened ? "default" : "pointer",
             background: "linear-gradient(160deg, #1e0a2e 0%, #2a0f3d 50%, #1a0820 100%)",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
             gap: 20,
-            minHeight: 420,
+            minHeight: 460,
             borderRadius: 28,
-            cursor: cardOpened ? "default" : "pointer",
           }}
         >
-          {/* Decorative envelope flap lines */}
-          <div style={{
-            position: "absolute", inset: 0, overflow: "hidden", borderRadius: 28, opacity: 0.15,
-          }}>
-            <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%",
-              background: "linear-gradient(135deg, transparent 49.5%, rgba(201,168,76,0.6) 49.5%, rgba(201,168,76,0.6) 50.5%, transparent 50.5%)" }} />
-            <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%",
-              background: "linear-gradient(225deg, transparent 49.5%, rgba(201,168,76,0.6) 49.5%, rgba(201,168,76,0.6) 50.5%, transparent 50.5%)" }} />
+          {/* Envelope diagonal lines */}
+          <div style={{ position: "absolute", inset: 0, overflow: "hidden", borderRadius: 28, opacity: 0.12 }}>
+            <div style={{
+              position: "absolute", top: 0, left: 0, width: "100%", height: "100%",
+              background: "linear-gradient(135deg, transparent 49.5%, rgba(201,168,76,0.8) 49.5%, rgba(201,168,76,0.8) 50.5%, transparent 50.5%)",
+            }} />
+            <div style={{
+              position: "absolute", top: 0, left: 0, width: "100%", height: "100%",
+              background: "linear-gradient(225deg, transparent 49.5%, rgba(201,168,76,0.8) 49.5%, rgba(201,168,76,0.8) 50.5%, transparent 50.5%)",
+            }} />
           </div>
 
-          {/* Wax seal style center piece */}
+          {/* Wax seal */}
           <div style={{
-            width: 110, height: 110, borderRadius: "50%",
+            width: 120, height: 120, borderRadius: "50%",
             background: "radial-gradient(circle at 35% 35%, #e8446a, #8c1a35)",
-            boxShadow: "0 0 40px rgba(232,68,106,0.5), inset 0 0 20px rgba(0,0,0,0.3)",
+            boxShadow: "0 0 50px rgba(232,68,106,0.6), inset 0 0 20px rgba(0,0,0,0.4)",
             display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: "3rem",
-            animation: "sealPulse 2s ease-in-out infinite",
+            fontSize: "3.2rem",
+            animation: "sealPulse 2.5s ease-in-out infinite",
+            transition: "transform 0.2s",
           }}>
             💌
           </div>
 
           <p style={{
             fontFamily: "'Great Vibes', cursive",
-            fontSize: "2.5rem",
+            fontSize: "2.8rem",
             color: "#f0d080",
-            textShadow: "0 0 20px rgba(240,208,128,0.4)",
+            textShadow: "0 0 30px rgba(240,208,128,0.5)",
           }}>
             Our Beautiful Moments
           </p>
 
-          <p style={{
-            fontFamily: "'Cormorant Garamond', serif",
-            fontStyle: "italic",
-            fontSize: "1rem",
-            opacity: 0.5,
-            letterSpacing: 3,
-            textTransform: "uppercase",
-          }}>
-            click to open ✉️
-          </p>
+          <div style={{ display: "flex", alignItems: "center", gap: 14, opacity: 0.45 }}>
+            <div style={{ width: 50, height: 1, background: "linear-gradient(90deg, transparent, #c9a84c)" }} />
+            <p style={{
+              fontFamily: "'Cormorant Garamond', serif",
+              fontStyle: "italic",
+              fontSize: "0.95rem",
+              letterSpacing: 3,
+              textTransform: "uppercase",
+            }}>
+              click to open ✉️
+            </p>
+            <div style={{ width: 50, height: 1, background: "linear-gradient(90deg, #c9a84c, transparent)" }} />
+          </div>
 
           {/* Bottom fold shadow */}
           <div style={{
-            position: "absolute", bottom: 0, left: 0, right: 0,
-            height: 60,
-            background: "linear-gradient(to top, rgba(0,0,0,0.4), transparent)",
+            position: "absolute", bottom: 0, left: 0, right: 0, height: 70,
+            background: "linear-gradient(to top, rgba(0,0,0,0.5), transparent)",
             borderRadius: "0 0 28px 28px",
           }} />
         </div>
@@ -165,7 +202,7 @@ export default function Gallery() {
           background: "linear-gradient(160deg, #160822 0%, #1e0b30 100%)",
           padding: "36px 32px 40px",
         }}>
-          {/* Inner card header */}
+          {/* Inner hint text */}
           <div style={{
             textAlign: "center", marginBottom: 32,
             opacity: photosVisible ? 1 : 0,
@@ -176,7 +213,7 @@ export default function Gallery() {
               fontFamily: "'Cormorant Garamond', serif",
               fontStyle: "italic",
               fontSize: "1.05rem",
-              color: "rgba(240,208,128,0.6)",
+              color: "rgba(240,208,128,0.55)",
               letterSpacing: 2,
             }}>
               — click any photo to read a little note 💌 —
@@ -196,7 +233,7 @@ export default function Gallery() {
                   boxShadow: "0 12px 40px rgba(0,0,0,0.4)",
                   opacity: photosVisible ? 1 : 0,
                   transform: photosVisible ? "translateY(0) scale(1)" : "translateY(30px) scale(0.96)",
-                  transition: `opacity 0.6s ease ${0.15 + i * 0.12}s, transform 0.6s ease ${0.15 + i * 0.12}s, box-shadow 0.3s ease`,
+                  transition: `opacity 0.6s ease ${0.15 + i * 0.12}s, transform 0.6s ease ${0.15 + i * 0.12}s, box-shadow 0.3s ease, border-color 0.3s ease`,
                 }}
                 onMouseEnter={(e) => {
                   const el = e.currentTarget as HTMLDivElement;
@@ -225,7 +262,7 @@ export default function Gallery() {
             ))}
           </div>
 
-          {/* Bottom gold strip */}
+          {/* Bottom decorative divider */}
           <div style={{
             marginTop: 36, textAlign: "center",
             opacity: photosVisible ? 1 : 0,
@@ -233,7 +270,7 @@ export default function Gallery() {
           }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 16 }}>
               <div style={{ width: 60, height: 1, background: "linear-gradient(90deg, transparent, #c9a84c)" }} />
-              <span style={{ fontSize: "1.2rem", opacity: 0.5 }}>💕</span>
+              <span style={{ fontSize: "1.2rem", opacity: 0.45 }}>💕</span>
               <div style={{ width: 60, height: 1, background: "linear-gradient(90deg, #c9a84c, transparent)" }} />
             </div>
           </div>
@@ -252,7 +289,7 @@ export default function Gallery() {
       {open !== null && current && (
         <>
           <div
-            onClick={closeCard}
+            onClick={closeModal}
             style={{
               position: "fixed", inset: 0,
               background: "rgba(0,0,0,0.82)",
@@ -265,8 +302,12 @@ export default function Gallery() {
             position: "fixed", top: "50%", left: "50%",
             transform: "translate(-50%,-50%)",
             zIndex: 1001,
-            width: "min(92vw, 780px)",
-            animation: isClosing ? "cardClose 0.4s cubic-bezier(0.4,0,1,1) forwards" : "cardOpen 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards",
+            width: "min(96vw, 780px)",
+            maxHeight: "90vh",
+            overflowY: "auto" as const,
+            animation: isClosing
+              ? "cardClose 0.4s cubic-bezier(0.4,0,1,1) forwards"
+              : "cardOpen 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards",
           }}>
             <div style={{
               background: "linear-gradient(160deg, #1e0a2e 0%, #2a0f3d 40%, #1a0820 100%)",
@@ -275,8 +316,15 @@ export default function Gallery() {
               boxShadow: "0 40px 120px rgba(0,0,0,0.7), 0 0 60px rgba(232,68,106,0.12)",
               overflow: "hidden",
             }}>
-              <div style={{ height: 6, background: "linear-gradient(90deg, #e8446a, #c9a84c, #f7b2c1, #e8446a)", backgroundSize: "300% 100%", animation: "shimmer 3s linear infinite" }} />
+              <div style={{
+                height: 6,
+                background: "linear-gradient(90deg, #e8446a, #c9a84c, #f7b2c1, #e8446a)",
+                backgroundSize: "300% 100%",
+                animation: "shimmer 3s linear infinite",
+              }} />
+
               <div style={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}>
+                {/* Photo */}
                 <div style={{ position: "relative", flex: "1 1 300px", minHeight: 360 }}>
                   <Image src={current.src} alt={current.title} fill style={{ objectFit: "cover" }} />
                   <div style={{
@@ -290,30 +338,80 @@ export default function Gallery() {
                     {current.title}
                   </div>
                 </div>
-                <div style={{ flex: "1 1 280px", padding: "48px 40px", display: "flex", flexDirection: "column", justifyContent: "center", position: "relative" }}>
+
+                {/* Message */}
+                <div style={{
+                  flex: "1 1 280px", padding: "48px 40px",
+                  display: "flex", flexDirection: "column", justifyContent: "center",
+                  position: "relative",
+                }}>
                   <span style={{ position: "absolute", top: 18, right: 22, fontSize: "1.4rem", opacity: 0.3 }}>💕</span>
                   <span style={{ position: "absolute", bottom: 18, left: 22, fontSize: "1rem", opacity: 0.2 }}>🌹</span>
-                  <p style={{ fontFamily: "'Great Vibes', cursive", fontSize: "2rem", color: "#e8446a", marginBottom: 24, lineHeight: 1.3 }}>
+
+                  <p style={{
+                    fontFamily: "'Great Vibes', cursive",
+                    fontSize: "2rem", color: "#e8446a",
+                    marginBottom: 24, lineHeight: 1.3,
+                  }}>
                     A little note...
                   </p>
-                  <div style={{ background: "rgba(255,255,255,0.03)", borderLeft: "3px solid rgba(232,68,106,0.4)", borderRadius: "0 12px 12px 0", padding: "20px 24px", marginBottom: 28 }}>
-                    <p style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: "italic", fontSize: "1.1rem", lineHeight: 1.9, color: "rgba(240,232,240,0.9)" }}>
+
+                  <div style={{
+                    background: "rgba(255,255,255,0.03)",
+                    borderLeft: "3px solid rgba(232,68,106,0.4)",
+                    borderRadius: "0 12px 12px 0",
+                    padding: "20px 24px", marginBottom: 28,
+                  }}>
+                    <p style={{
+                      fontFamily: "'Cormorant Garamond', serif",
+                      fontStyle: "italic", fontSize: "1.1rem",
+                      lineHeight: 1.9, color: "rgba(240,232,240,0.9)",
+                    }}>
                       "{current.note}"
                     </p>
                   </div>
-                  <p style={{ fontSize: "0.85rem", opacity: 0.5, letterSpacing: 2, textTransform: "uppercase", fontFamily: "'Cormorant Garamond', serif", marginBottom: 32 }}>
+
+                  <p style={{
+                    fontSize: "0.85rem", opacity: 0.5, letterSpacing: 2,
+                    textTransform: "uppercase",
+                    fontFamily: "'Cormorant Garamond', serif", marginBottom: 32,
+                  }}>
                     — Deep 💌
                   </p>
+
+                  {/* Prev / Next */}
                   <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-                    <button onClick={(e) => { e.stopPropagation(); setOpen((open - 1 + photos.length) % photos.length); }} style={arrowBtn}>←</button>
-                    <span style={{ opacity: 0.4, fontSize: "0.8rem", flex: 1, textAlign: "center" }}>{open + 1} / {photos.length}</span>
-                    <button onClick={(e) => { e.stopPropagation(); setOpen((open + 1) % photos.length); }} style={arrowBtn}>→</button>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setOpen((open - 1 + photos.length) % photos.length); }}
+                      style={arrowBtn}
+                    >←</button>
+                    <span style={{ opacity: 0.4, fontSize: "0.8rem", flex: 1, textAlign: "center" }}>
+                      {open + 1} / {photos.length}
+                    </span>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setOpen((open + 1) % photos.length); }}
+                      style={arrowBtn}
+                    >→</button>
                   </div>
                 </div>
               </div>
-              <div style={{ padding: "14px 30px", borderTop: "1px solid rgba(255,255,255,0.05)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+
+              {/* Footer */}
+              <div style={{
+                padding: "14px 30px",
+                borderTop: "1px solid rgba(255,255,255,0.05)",
+                display: "flex", justifyContent: "space-between", alignItems: "center",
+              }}>
                 <span style={{ fontStyle: "italic", opacity: 0.4, fontSize: "0.85rem" }}>{current.caption}</span>
-                <button onClick={closeCard} style={{ background: "none", border: "1px solid rgba(255,255,255,0.15)", color: "rgba(255,255,255,0.5)", borderRadius: 20, padding: "6px 18px", fontSize: "0.8rem", cursor: "pointer", fontFamily: "'Cormorant Garamond', serif", letterSpacing: 1 }}>
+                <button
+                  onClick={closeModal}
+                  style={{
+                    background: "none", border: "1px solid rgba(255,255,255,0.15)",
+                    color: "rgba(255,255,255,0.5)", borderRadius: 20,
+                    padding: "6px 18px", fontSize: "0.8rem", cursor: "pointer",
+                    fontFamily: "'Cormorant Garamond', serif", letterSpacing: 1,
+                  }}
+                >
                   Close ✕
                 </button>
               </div>
@@ -323,26 +421,39 @@ export default function Gallery() {
       )}
 
       <style>{`
-        @keyframes shimmer { to { background-position: 300% center; } }
+        @keyframes shimmer     { to { background-position: 300% center; } }
         @keyframes sealPulse {
           0%, 100% { box-shadow: 0 0 30px rgba(232,68,106,0.4), inset 0 0 20px rgba(0,0,0,0.3); }
-          50%       { box-shadow: 0 0 60px rgba(232,68,106,0.7), inset 0 0 20px rgba(0,0,0,0.3); }
+          50%       { box-shadow: 0 0 70px rgba(232,68,106,0.8), inset 0 0 20px rgba(0,0,0,0.3); }
         }
-        @keyframes fadeIn  { from { opacity:0 } to { opacity:1 } }
-        @keyframes fadeOut { from { opacity:1 } to { opacity:0 } }
-        @keyframes cardOpen  {
-          0%   { opacity:0; transform: translate(-50%,-50%) scale(0.85) rotateX(8deg); }
-          100% { opacity:1; transform: translate(-50%,-50%) scale(1) rotateX(0deg); }
+        @keyframes burstFade {
+          0%   { opacity: 0; }
+          20%  { opacity: 1; }
+          100% { opacity: 0; }
+        }
+        @keyframes burstExpand {
+          0%   { transform: scale(0.05); opacity: 0; }
+          35%  { transform: scale(1);    opacity: 1; }
+          100% { transform: scale(1.8);  opacity: 0; }
+        }
+        @keyframes rayExpand {
+          0%   { opacity: 1; transform: rotate(var(--r, 0deg)) translateX(-50%) scaleY(0.1); }
+          60%  { opacity: 0.8; }
+          100% { opacity: 0;   transform: rotate(var(--r, 0deg)) translateX(-50%) scaleY(1); }
+        }
+        @keyframes centerFlash {
+          0%   { transform: scale(0); opacity: 1; }
+          100% { transform: scale(4); opacity: 0; }
+        }
+        @keyframes fadeIn  { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+        @keyframes cardOpen {
+          0%   { opacity: 0; transform: translate(-50%,-50%) scale(0.85) rotateX(8deg); }
+          100% { opacity: 1; transform: translate(-50%,-50%) scale(1)    rotateX(0deg); }
         }
         @keyframes cardClose {
-          0%   { opacity:1; transform: translate(-50%,-50%) scale(1); }
-          100% { opacity:0; transform: translate(-50%,-50%) scale(0.9) translateY(20px); }
-        }
-        @keyframes flashBurst {
-          0%   { opacity: 0; transform: scale(0.3); }
-          20%  { opacity: 1; transform: scale(1.2); }
-          50%  { opacity: 0.8; transform: scale(1.5); }
-          100% { opacity: 0; transform: scale(2); }
+          0%   { opacity: 1; transform: translate(-50%,-50%) scale(1); }
+          100% { opacity: 0; transform: translate(-50%,-50%) scale(0.9) translateY(20px); }
         }
       `}</style>
     </section>
