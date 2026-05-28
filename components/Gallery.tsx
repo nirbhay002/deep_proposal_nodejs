@@ -15,6 +15,7 @@ export default function Gallery() {
   const [cardOpened, setCardOpened] = useState(false);
   const [photosVisible, setPhotosVisible] = useState(false);
   const [lightBurst, setLightBurst] = useState(false);
+  const [coverGone, setCoverGone] = useState(false);
   const [open, setOpen] = useState<number | null>(null);
   const [isClosing, setIsClosing] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -32,7 +33,11 @@ export default function Gallery() {
     setLightBurst(true);
     setTimeout(() => {
       setCardOpened(true);
-      setTimeout(() => setPhotosVisible(true), isMobile ? 500 : 900);
+      // Mobile: animation 700ms, uske baad cover completely hatao
+      if (isMobile) {
+        setTimeout(() => setCoverGone(true), 750);
+      }
+      setTimeout(() => setPhotosVisible(true), isMobile ? 900 : 900);
     }, 350);
     setTimeout(() => setLightBurst(false), 800);
   }
@@ -154,6 +159,7 @@ export default function Gallery() {
             zIndex: 10,
             pointerEvents: cardOpened ? "none" : "all",
             cursor: cardOpened ? "default" : "pointer",
+            display: coverGone ? "none" : "flex",
             background: "linear-gradient(160deg, #1e0a2e 0%, #2a0f3d 50%, #1a0820 100%)",
             display: "flex",
             flexDirection: "column",
