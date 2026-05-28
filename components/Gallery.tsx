@@ -161,7 +161,6 @@ export default function Gallery() {
             cursor: cardOpened ? "default" : "pointer",
             display: coverGone ? "none" : "flex",
             background: "linear-gradient(160deg, #1e0a2e 0%, #2a0f3d 50%, #1a0820 100%)",
-            display: "flex",
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
